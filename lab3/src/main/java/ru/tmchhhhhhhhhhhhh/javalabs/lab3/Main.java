@@ -1,6 +1,5 @@
 package ru.tmchhhhhhhhhhhhh.javalabs.lab3;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -23,8 +22,12 @@ public class Main {
             System.out.println("7. Статистика");
             System.out.println("8. Удалить блюдо (админ)");
             System.out.println("9. Редактировать блюдо (админ)");
-            System.out.println("10. Сохранить меню");
-            System.out.println("11. Выход");
+            System.out.println("10. Сохранить меню (бинарный формат)");
+            System.out.println("11. Экспорт в CSV");
+            System.out.println("12. Импорт из CSV");
+            System.out.println("13. Экспорт в JSON");
+            System.out.println("14. Импорт из JSON");
+            System.out.println("15. Выход");
             System.out.print("Выберите действие: ");
             int choice = sc.nextInt();
             sc.nextLine(); // очистка буфера
@@ -104,7 +107,14 @@ public class Main {
                     } else System.out.println("Неверный пароль!");
                 }
                 case 10 -> manager.saveToFile();
-                case 11 -> { running=false; manager.saveToFile(); }
+                case 11 -> manager.exportToCSV();
+                case 12 -> manager.importFromCSV();
+                case 13 -> manager.exportToJSON();
+                case 14 -> manager.importFromJSON();
+                case 15 -> {
+                    running = false;
+                    manager.saveToFile();
+                }
                 default -> System.out.println("Некорректный выбор");
             }
         }
