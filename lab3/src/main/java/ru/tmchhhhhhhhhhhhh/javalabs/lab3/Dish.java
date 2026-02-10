@@ -15,9 +15,8 @@ public abstract class Dish implements Serializable {
         this.ingredients = ingredients;
     }
 
-    public abstract void prepare(); // абстрактный метод
+    public abstract void prepare();
 
-    // Геттеры и сеттеры
     public String getName() { return name; }
     public double getPrice() { return price; }
     public int getCalories() { return calories; }

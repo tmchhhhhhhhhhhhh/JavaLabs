@@ -16,7 +16,7 @@ public class PasswordGenerator {
         if (useDigits) chars.append(DIGITS);
         if (useSymbols) chars.append(SYMBOLS);
 
-        if (chars.length() == 0) throw new IllegalArgumentException("Нет символов для генерации");
+        if (chars.isEmpty()) throw new IllegalArgumentException("Нет символов для генерации");
 
         StringBuilder password = new StringBuilder();
         for (int i = 0; i < length; i++) {

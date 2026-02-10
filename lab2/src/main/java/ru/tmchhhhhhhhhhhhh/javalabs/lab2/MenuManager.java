@@ -8,13 +8,11 @@ public class MenuManager {
     private List<Dish> dishes = new ArrayList<>();
     private final String FILE_NAME = "lab2/menu.dat";
 
-    // Добавление
     public void addDish(Dish d) {
         dishes.add(d);
         System.out.println(d.getType() + " добавлено: " + d.getName());
     }
 
-    // Просмотр
     public void showAll() {
         if (dishes.isEmpty()) {
             System.out.println("Меню пусто.");
@@ -26,7 +24,6 @@ public class MenuManager {
         }
     }
 
-    // Удаление
     public void removeDish(int index) {
         if (index >= 0 && index < dishes.size()) {
             System.out.println("Удалено: " + dishes.get(index).getName());
@@ -36,7 +33,6 @@ public class MenuManager {
         }
     }
 
-    // Редактирование цены и ингредиентов
     public void editDish(int index, Scanner sc) {
         if (index >= 0 && index < dishes.size()) {
             Dish d = dishes.get(index);
@@ -56,7 +52,6 @@ public class MenuManager {
         }
     }
 
-    // Поиск по названию
     public void searchByName(String keyword) {
         boolean found = false;
         for (Dish d : dishes) {
@@ -68,7 +63,6 @@ public class MenuManager {
         if (!found) System.out.println("Совпадений не найдено.");
     }
 
-    // Поиск по ингредиентам
     public void searchByIngredient(String ingredient) {
         boolean found = false;
         for (Dish d : dishes) {
@@ -80,7 +74,6 @@ public class MenuManager {
         if (!found) System.out.println("Совпадений не найдено.");
     }
 
-    // Фильтр по типу
     public void filterByType(Class<? extends Dish> type) {
         boolean found = false;
         for (Dish d : dishes) {
@@ -92,7 +85,6 @@ public class MenuManager {
         if (!found) System.out.println("Совпадений не найдено.");
     }
 
-    // Фильтр по цене
     public void filterByPrice(double min, double max) {
         boolean found = false;
         for (Dish d : dishes) {
@@ -104,7 +96,6 @@ public class MenuManager {
         if (!found) System.out.println("Совпадений не найдено.");
     }
 
-    // Фильтр по калориям
     public void filterByCalories(int min, int max) {
         boolean found = false;
         for (Dish d : dishes) {
@@ -116,7 +107,6 @@ public class MenuManager {
         if (!found) System.out.println("Совпадений не найдено.");
     }
 
-    // Сортировка
     public void sortByName() {
         dishes.sort(Comparator.comparing(Dish::getName));
         System.out.println("Сортировка по названию выполнена.");
@@ -127,7 +117,6 @@ public class MenuManager {
         System.out.println("Сортировка по цене выполнена.");
     }
 
-    // Статистика
     public void statistics() {
         Map<String, List<Dish>> map = dishes.stream().collect(Collectors.groupingBy(Dish::getType));
         for (String type : map.keySet()) {
@@ -137,7 +126,6 @@ public class MenuManager {
         }
     }
 
-    // Сохранение
     public void saveToFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             oos.writeObject(dishes);
@@ -147,7 +135,6 @@ public class MenuManager {
         }
     }
 
-    // Загрузка
     public void loadFromFile() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
             dishes = (List<Dish>) ois.readObject();

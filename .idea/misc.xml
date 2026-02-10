@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/lab1/lab1/pom.xml" />
+        <option value="$PROJECT_DIR$/lab1/pom.xml" />
+        <option value="$PROJECT_DIR$/lab2/pom.xml" />
+        <option value="$PROJECT_DIR$/lab3/pom.xml" />
+        <option value="$PROJECT_DIR$/laba4/pom.xml" />
+        <option value="$PROJECT_DIR$/lab5/pom.xml" />
+        <option value="$PROJECT_DIR$/lab6/pom.xml" />
+        <option value="$PROJECT_DIR$/lab7/pom.xml" />
+        <option value="$PROJECT_DIR$/lab8/pom.xml" />
+        <option value="$PROJECT_DIR$/lab4/pom.xml" />
+        <option value="$PROJECT_DIR$/lab4z11/pom.xml" />
+        <option value="$PROJECT_DIR$/lab4z26/pom.xml" />
+        <option value="$PROJECT_DIR$/lab5-client/pom.xml" />
+        <option value="$PROJECT_DIR$/lab5/lab5server/pom.xml" />
+        <option value="$PROJECT_DIR$/lab5/lab5client/pom.xml" />
+        <option value="$PROJECT_DIR$/lab6/lab6client/pom.xml" />
+        <option value="$PROJECT_DIR$/lab6/lab6server/pom.xml" />
+        <option value="$PROJECT_DIR$/lab7/lab7client/pom.xml" />
+        <option value="$PROJECT_DIR$/lab7/lab7server/pom.xml" />
+        <option value="$PROJECT_DIR$/lab4/lab4z11/pom.xml" />
+        <option value="$PROJECT_DIR$/lab4/lab4z26/pom.xml" />
+        <option value="$PROJECT_DIR$/lab4/lab4/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/lab5-client/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="dragonwell-ex-21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
