@@ -409,12 +409,57 @@ public class Main {
         Response response = client.sendRequest(new Request(Operation.GET_STATISTICS));
 
         if (response.isSuccess()) {
-            System.out.println("\n=== ОБЩАЯ СТАТИСТИКА ===");
-            System.out.println(response.getMessage());
+            Map<String, Object> stats = gson.fromJson(response.getData(),
+                    new TypeToken<Map<String, Object>>(){}.getType());
+
+            System.out.println("\n=== ОБЩАЯ СТАТИСТИКА МЕНЮ ===");
+            System.out.println("\n1. Общие показатели:");
+            System.out.printf("   Всего блюд: %d%n", ((Number) stats.get("totalDishes")).intValue());
+            System.out.printf("   Средняя цена: %.2f ₽%n", ((Number) stats.get("avgPrice")).doubleValue());
+            System.out.printf("   Диапазон цен: %.2f - %.2f ₽%n",
+                    ((Number) stats.get("minPrice")).doubleValue(),
+                    ((Number) stats.get("maxPrice")).doubleValue());
+            System.out.printf("   Средняя калорийность: %.0f kcal%n", ((Number) stats.get("avgCalories")).doubleValue());
+            System.out.printf("   Диапазон калорий: %.0f - %.0f kcal%n",
+                    ((Number) stats.get("minCalories")).doubleValue(),
+                    ((Number) stats.get("maxCalories")).doubleValue());
+
+            // Статистика по типам
+            if (stats.containsKey("typeStats")) {
+                System.out.println("\n2. Статистика по типам блюд:");
+                @SuppressWarnings("unchecked")
+                Map<String, Map<String, Object>> typeStats =
+                        (Map<String, Map<String, Object>>) stats.get("typeStats");
+
+                typeStats.forEach((type, typeStat) -> {
+                    System.out.printf("   %s:%n", type);
+                    System.out.printf("      Количество: %d%n", ((Number) typeStat.get("count")).intValue());
+                    System.out.printf("      Средняя цена: %.2f ₽%n", ((Number) typeStat.get("avgPrice")).doubleValue());
+                    System.out.printf("      Мин/Макс: %.2f / %.2f ₽%n",
+                            ((Number) typeStat.get("minPrice")).doubleValue(),
+                            ((Number) typeStat.get("maxPrice")).doubleValue());
+                });
+            }
+
+            // ТОП-3 дорогих блюд
+            if (stats.containsKey("top3Expensive")) {
+                System.out.println("\n3. ТОП-3 самых дорогих блюд:");
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> top3 = (List<Map<String, Object>>) stats.get("top3Expensive");
+
+                for (int i = 0; i < top3.size(); i++) {
+                    Map<String, Object> dish = top3.get(i);
+                    System.out.printf("   %d. %s - %.2f ₽%n",
+                            i + 1,
+                            dish.get("name"),
+                            ((Number) dish.get("price")).doubleValue());
+                }
+            }
         } else {
             System.out.println("✗ " + response.getMessage());
         }
     }
+
 
     private static void getCaloriesMap() {
         Response response = client.sendRequest(new Request(Operation.GET_CALORIES_MAP));
