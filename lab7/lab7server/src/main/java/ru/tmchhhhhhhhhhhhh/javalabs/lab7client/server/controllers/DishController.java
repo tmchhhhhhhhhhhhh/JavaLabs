@@ -1,13 +1,13 @@
-package ru.restaurant.server.controllers;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import ru.restaurant.common.exceptions.ResponseException;
-import ru.restaurant.common.model.Dish;
-import ru.restaurant.common.network.Request;
-import ru.restaurant.common.network.Response;
-import ru.restaurant.server.dao.DishDAO;
-import ru.restaurant.server.dao.OrderDAO;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.exceptions.ResponseException;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.model.Dish;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.network.Request;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.network.Response;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.dao.DishDAO;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.dao.OrderDAO;
 
 import java.util.*;
 

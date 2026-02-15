@@ -1,4 +1,4 @@
-package ru.restaurant.server.util;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

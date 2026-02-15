@@ -143,4 +143,8 @@ public class MenuManager {
             System.out.println("Нет сохранённых данных.");
         }
     }
+
+    public int getDishCount() {
+        return dishes.size();
+    }
 }

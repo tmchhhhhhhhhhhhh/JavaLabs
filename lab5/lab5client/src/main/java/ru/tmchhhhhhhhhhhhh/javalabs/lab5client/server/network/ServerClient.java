@@ -1,7 +1,6 @@
 package ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.network;
 
 import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.exceptions.NoConnectionException;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -41,9 +40,9 @@ public class ServerClient {
             in = new ObjectInputStream(socket.getInputStream());
 
             System.out.println("✓ Подключено к серверу: " + serverAddress + ":" + serverPort);
+
         } catch (IOException e) {
-            throw new NoConnectionException("Не удалось подключиться к серверу " +
-                    serverAddress + ":" + serverPort + ". " + e.getMessage());
+            throw new NoConnectionException("Не удалось подключиться к серверу: " + serverAddress + ":" + serverPort);
         }
     }
 
@@ -61,26 +60,23 @@ public class ServerClient {
 
     public Response sendRequest(Request request) {
         try {
-            System.out.println("→ Отправка запроса: " + request.getOperation());
+            System.out.println("Отправка запроса: " + request.getOperation());
             out.writeObject(request);
             out.flush();
-
-            Response response = processResponse();
-            System.out.println("← Получен ответ: " + response.getMessage());
-
-            return response;
+            return processResponse();
         } catch (IOException e) {
             System.err.println("Ошибка отправки запроса: " + e.getMessage());
-            return new Response(false, "Ошибка связи с сервером", null);
+            return null;
         }
     }
 
     private Response processResponse() {
         try {
-            return (Response) in.readObject();
+            Response response = (Response) in.readObject();
+            return response;
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Ошибка получения ответа: " + e.getMessage());
-            return new Response(false, "Ошибка получения ответа от сервера", null);
+            return null;
         }
     }
 

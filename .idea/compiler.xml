@@ -10,20 +10,29 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="lab6server" />
         <module name="lab4z26" />
-        <module name="lab7client" />
         <module name="lab3" />
-        <module name="lab6client" />
         <module name="lab4" />
         <module name="lab1" />
         <module name="lab4z11" />
         <module name="lab2" />
-        <module name="lab7server" />
         <module name="lab8" />
         <module name="lab5-client" />
       </profile>
-      <profile name="Annotation profile for lab5server" enabled="true">
+      <profile name="Annotation profile for lab7server" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
+        </processorPath>
+        <module name="lab7server" />
+        <module name="lab5client" />
+        <module name="lab5server" />
+        <module name="lab6server" />
+        <module name="lab6client" />
+      </profile>
+      <profile name="Annotation profile for lab7client" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -31,8 +40,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
         </processorPath>
-        <module name="lab5client" />
-        <module name="lab5server" />
+        <module name="lab7client" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

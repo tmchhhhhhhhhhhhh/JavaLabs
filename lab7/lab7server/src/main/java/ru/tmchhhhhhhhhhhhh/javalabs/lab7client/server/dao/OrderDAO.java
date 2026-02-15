@@ -1,11 +1,11 @@
-package ru.restaurant.server.dao;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import ru.restaurant.common.model.Dish;
-import ru.restaurant.server.model.Order;
-import ru.restaurant.server.util.HibernateUtil;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.model.Dish;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.model.Order;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.util.HibernateUtil;
 
 import java.util.HashMap;
 import java.util.List;

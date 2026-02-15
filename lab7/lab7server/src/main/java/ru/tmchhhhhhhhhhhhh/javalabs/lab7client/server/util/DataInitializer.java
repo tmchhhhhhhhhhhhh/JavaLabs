@@ -1,7 +1,7 @@
-package ru.restaurant.server.util;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.util;
 
-import ru.restaurant.common.model.Dish;
-import ru.restaurant.server.dao.DishDAO;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.model.Dish;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.dao.DishDAO;
 
 public class DataInitializer {
     

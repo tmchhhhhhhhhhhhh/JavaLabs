@@ -1,8 +1,8 @@
-package ru.restaurant.server.network;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.network;
 
-import ru.restaurant.common.network.Request;
-import ru.restaurant.common.network.Response;
-import ru.restaurant.server.controllers.DishController;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.network.Request;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.network.Response;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.controllers.DishController;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -41,7 +41,7 @@ public class ClientThread implements Runnable {
                         output.writeObject(response);
                         output.flush();
 
-                        if (request.getOperation() == ru.restaurant.common.enums.Operation.DISCONNECT) {
+                        if (request.getOperation() == ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.enums.Operation.DISCONNECT) {
                             keepRunning = false;
                         }
                     }

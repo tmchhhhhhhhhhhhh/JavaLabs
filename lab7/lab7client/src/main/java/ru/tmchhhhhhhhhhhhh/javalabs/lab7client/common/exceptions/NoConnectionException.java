@@ -1,4 +1,4 @@
-package ru.restaurant.common.exceptions;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.exceptions;
 
 public class NoConnectionException extends RuntimeException {
     public NoConnectionException(String message) {

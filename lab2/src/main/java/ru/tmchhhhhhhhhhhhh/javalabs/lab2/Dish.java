@@ -1,7 +1,10 @@
 package ru.tmchhhhhhhhhhhhh.javalabs.lab2;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public abstract class Dish implements Serializable {
     private String name;

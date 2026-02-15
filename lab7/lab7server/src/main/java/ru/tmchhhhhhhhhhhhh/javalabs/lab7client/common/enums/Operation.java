@@ -1,4 +1,4 @@
-package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.common.enums;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.enums;
 
 public enum Operation {
     // CRUD операции

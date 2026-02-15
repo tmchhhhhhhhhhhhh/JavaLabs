@@ -1,15 +1,19 @@
-package ru.restaurant.server.network;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.network;
 
-import ru.restaurant.server.util.HibernateUtil;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.util.HibernateUtil;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ResourceBundle;
+
 
 public class Server {
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("server");
+    private static final int serverPort = Integer.parseInt(bundle.getString("SERVER_PORT"));
     private static int clientCount = 0;
 
     public static void main(String[] args) {
         System.out.println("╔════════════════════════════════════════════════╗");
-        System.out.println("║   МНОГОПОТОЧНЫЙ СЕРВЕР С HIBERNATE ORM         ║");
+        System.out.println("║   МНОГОПОТОЧНЫЙ СЕРВЕР РЕСТОРАНА               ║");
         System.out.println("╚════════════════════════════════════════════════╝\n");
         
         // Инициализация Hibernate
@@ -17,7 +21,7 @@ public class Server {
             HibernateUtil.getSessionFactory();
             
             // Загрузка тестовых данных
-            ru.restaurant.server.util.DataInitializer.loadTestData();
+            ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.util.DataInitializer.loadTestData();
             
             System.out.println();
         } catch (Exception e) {
@@ -30,8 +34,8 @@ public class Server {
     }
 
     private static void startServer() {
-        try (ServerSocket serverSocket = new ServerSocket(6666)) {
-            System.out.println("✓ Сервер запущен на порту 6666!");
+        try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
+            System.out.println("✓ Сервер запущен на порту " + serverPort +"!");
             System.out.println("Ожидание подключений клиентов...\n");
 
             while (true) {

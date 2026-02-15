@@ -1,467 +1,512 @@
 package ru.tmchhhhhhhhhhhhh.javalabs.lab5client;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.enums.Operation;
 import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.exceptions.NoConnectionException;
-import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.model.entities.Dish;
 import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.network.Request;
 import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.network.Response;
 import ru.tmchhhhhhhhhhhhh.javalabs.lab5client.server.network.ServerClient;
-
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.UUID;
 
 public class Main {
     private static ServerClient client;
-    private static final Gson gson = new Gson();
-    private static final Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("╔════════════════════════════════════════════════╗");
-        System.out.println("║   КЛИЕНТ СИСТЕМЫ УПРАВЛЕНИЯ РЕСТОРАНОМ         ║");
-        System.out.println("╚════════════════════════════════════════════════╝\n");
+        System.out.println("=".repeat(60));
+        System.out.println("     КЛИЕНТ СИСТЕМЫ УПРАВЛЕНИЯ РЕСТОРАНОМ");
+        System.out.println("=".repeat(60));
 
         try {
             client = ServerClient.getInstance();
-            System.out.println();
+            System.out.println("\n✓ Соединение с сервером установлено успешно!\n");
+
+            boolean running = true;
+
+            while (running) {
+                displayMainMenu();
+
+                try {
+                    int choice = getIntInput("Выберите действие: ");
+
+                    switch (choice) {
+                        case 1 -> addDishMenu();
+                        case 2 -> viewAllDishes();
+                        case 3 -> searchDishByName();
+                        case 4 -> updateDishPrice();
+                        case 5 -> updateDishIngredients();
+                        case 6 -> deleteDish();
+                        case 7 -> orderDish();
+                        case 8 -> prepareDish();
+                        case 9 -> viewOrderStatistics();
+                        case 10 -> filterMenu();
+                        case 11 -> sortMenu();
+                        case 12 -> viewStatistics();
+                        case 13 -> viewCaloriesMap();
+                        case 14 -> viewTopPopularDishes();
+                        case 15 -> {
+                            running = false;
+                            disconnect();
+                        }
+                        default -> System.out.println("✗ Некорректный выбор!");
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("✗ Ошибка: " + e.getMessage());
+                    scanner.nextLine(); // Очистка буфера
+                }
+            }
+
         } catch (NoConnectionException e) {
-            System.err.println(e.getMessage());
-            System.err.println("Убедитесь, что сервер запущен и доступен.");
-            return;
-        }
-
-        mainMenu();
-        disconnectFromServer();
-    }
-
-
-
-    private static void mainMenu() {
-        boolean running = true;
-
-        while (running) {
-            System.out.println("\n┌────────────────────────────────────────────────┐");
-            System.out.println("│            ГЛАВНОЕ МЕНЮ КЛИЕНТА                │");
-            System.out.println("├────────────────────────────────────────────────┤");
-            System.out.println("│ 1.  Просмотреть все блюда                      │");
-            System.out.println("│ 2.  Создать блюдо                              │");
-            System.out.println("│ 3.  Обновить блюдо                             │");
-            System.out.println("│ 4.  Удалить блюдо                              │");
-            System.out.println("│ 5.  Фильтр по типу                             │");
-            System.out.println("│ 6.  Фильтр по цене                             │");
-            System.out.println("│ 7.  Фильтр по калориям                         │");
-            System.out.println("│ 8.  Сортировка по названию                     │");
-            System.out.println("│ 9.  Сортировка по цене                         │");
-            System.out.println("│ 10. Сортировка по калориям                     │");
-            System.out.println("│ 11. Заказать блюдо                             │");
-            System.out.println("│ 12. Статистика заказов                         │");
-            System.out.println("│ 13. Общая статистика                           │");
-            System.out.println("│ 14. Карта калорийности                         │");
-            System.out.println("│ 15. Журнал изменений                           │");
-            System.out.println("│ 0.  Выход                                      │");
-            System.out.println("└────────────────────────────────────────────────┘");
-            System.out.print("Выберите действие: ");
-
-            try {
-                int choice = Integer.parseInt(scanner.nextLine());
-
-                switch (choice) {
-                    case 1 -> getAllDishes();
-                    case 2 -> createDishInteractive();
-                    case 3 -> updateDishInteractive();
-                    case 4 -> deleteDishInteractive();
-                    case 5 -> filterByTypeInteractive();
-                    case 6 -> filterByPriceInteractive();
-                    case 7 -> filterByCaloriesInteractive();
-                    case 8 -> sortByNameInteractive();
-                    case 9 -> sortByPriceInteractive();
-                    case 10 -> sortByCaloriesInteractive();
-                    case 11 -> orderDishInteractive();
-                    case 12 -> getOrderStatistics();
-                    case 13 -> getStatistics();
-                    case 14 -> getCaloriesMap();
-                    case 15 -> getMenuChangeLogInteractive();
-                    case 0 -> running = false;
-                    default -> System.out.println("✗ Неверный выбор");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("✗ Введите число!");
-            }
+            System.err.println("✗ Не удалось подключиться к серверу!");
+            System.err.println("Убедитесь, что сервер запущен на localhost:6666");
+        } finally {
+            scanner.close();
         }
     }
 
-    private static void getAllDishes() {
-        Response response = client.sendRequest(new Request(Operation.GET_ALL_DISHES));
-
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
-
-            System.out.println("\n=== МЕНЮ РЕСТОРАНА ===");
-            if (dishes.isEmpty()) {
-                System.out.println("Меню пусто");
-            } else {
-                for (int i = 0; i < dishes.size(); i++) {
-                    Dish dish = dishes.get(i);
-                    System.out.printf("%d. [%s] %s | %.2f ₽ | %d kcal | %s%n",
-                            i + 1, dish.getType(), dish.getName(),
-                            dish.getPrice(), dish.getCalories(), dish.getIngredients());
-                }
-            }
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
+    private static void displayMainMenu() {
+        System.out.println("\n" + "─".repeat(60));
+        System.out.println("│                    ГЛАВНОЕ МЕНЮ                          │");
+        System.out.println("─".repeat(60));
+        System.out.println("│  УПРАВЛЕНИЕ БЛЮДАМИ:                                     │");
+        System.out.println("│  1.  Добавить блюдо                                      │");
+        System.out.println("│  2.  Просмотреть все блюда                               │");
+        System.out.println("│  3.  Найти блюдо по названию                             │");
+        System.out.println("│  4.  Обновить цену блюда                                 │");
+        System.out.println("│  5.  Обновить ингредиенты блюда                          │");
+        System.out.println("│  6.  Удалить блюдо                                       │");
+        System.out.println("│                                                          │");
+        System.out.println("│  ЗАКАЗЫ:                                                 │");
+        System.out.println("│  7.  Заказать блюдо                                      │");
+        System.out.println("│  8.  Приготовить блюдо                                   │");
+        System.out.println("│  9.  Просмотреть статистику заказов                      │");
+        System.out.println("│                                                          │");
+        System.out.println("│  ФИЛЬТРЫ И СТАТИСТИКА:                                   │");
+        System.out.println("│  10. Фильтровать меню                                    │");
+        System.out.println("│  11. Сортировать меню                                    │");
+        System.out.println("│  12. Просмотреть статистику меню                         │");
+        System.out.println("│  13. Просмотреть карту калорийности                      │");
+        System.out.println("│  14. ТОП популярных блюд                                 │");
+        System.out.println("│                                                          │");
+        System.out.println("│  15. Выход                                               │");
+        System.out.println("─".repeat(60));
     }
 
-    private static void createDish(Dish dish) {
-        Request request = new Request(Operation.CREATE_DISH, gson.toJson(dish));
-        Response response = client.sendRequest(request);
+    private static void addDishMenu() {
+        System.out.println("\n=== ДОБАВЛЕНИЕ БЛЮДА ===");
+        System.out.println("Типы блюд:");
+        System.out.println("1. Закуска (Starter)");
+        System.out.println("2. Основное блюдо (MainCourse)");
+        System.out.println("3. Десерт (Dessert)");
 
-        if (response.isSuccess()) {
-            System.out.println("✓ " + response.getMessage());
-            Dish created = gson.fromJson(response.getData(), Dish.class);
-            System.out.println("  Создано: " + created.getName());
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void createDishInteractive() {
-        System.out.println("\n=== СОЗДАНИЕ БЛЮДА ===");
-
-        System.out.print("Название: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Цена (₽): ");
-        double price = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Калории (kcal): ");
-        int calories = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Ингредиенты: ");
-        String ingredients = scanner.nextLine();
-
-        System.out.println("Тип: 1-Starter, 2-MainCourse, 3-Dessert");
-        System.out.print("Выберите: ");
-        int typeChoice = Integer.parseInt(scanner.nextLine());
+        int typeChoice = getIntInput("Выберите тип блюда: ");
+        scanner.nextLine();
 
         String type = switch (typeChoice) {
             case 1 -> "Starter";
             case 2 -> "MainCourse";
             case 3 -> "Dessert";
-            default -> "MainCourse";
+            default -> null;
         };
 
-        Dish dish = new Dish(UUID.randomUUID().toString(), name, price, calories, ingredients, type);
-        createDish(dish);
-    }
+        if (type == null) {
+            System.out.println("✗ Неверный тип блюда!");
+            return;
+        }
 
-    private static void updateDishInteractive() {
-        getAllDishes();
-
-        System.out.print("\nВведите ID блюда для обновления: ");
-        String id = scanner.nextLine();
-
-        System.out.print("Новое название: ");
+        System.out.print("Название: ");
         String name = scanner.nextLine();
 
-        System.out.print("Новая цена: ");
-        double price = Double.parseDouble(scanner.nextLine());
+        double price = getDoubleInput("Цена (₽): ");
+        int calories = getIntInput("Калории (kcal): ");
+        scanner.nextLine();
 
-        System.out.print("Новые калории: ");
-        int calories = Integer.parseInt(scanner.nextLine());
+        System.out.print("Ингредиенты: ");
+        String ingredients = scanner.nextLine();
+
+        String data = type + "|" + name + "|" + price + "|" + calories + "|" + ingredients;
+        Request request = new Request(Operation.ADD_DISH, data);
+
+        Response response = client.sendRequest(request);
+
+        if (response != null) {
+            if (response.isSuccess()) {
+                System.out.println("✓ " + response.getMessage());
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
+        }
+    }
+
+    private static void viewAllDishes() {
+        Request request = new Request(Operation.GET_ALL_DISHES);
+        Response response = client.sendRequest(request);
+
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n=== ВСЕ БЛЮДА В МЕНЮ ===");
+            String data = response.getData();
+
+            if (data == null || data.isEmpty()) {
+                System.out.println("Меню пусто");
+                return;
+            }
+
+            String[] dishes = data.split(";;");
+            for (int i = 0; i < dishes.length; i++) {
+                String[] parts = dishes[i].split("\\|");
+                if (parts.length >= 5) {
+                    System.out.printf("%d. [%s] %s | %.2f ₽ | %s kcal | %s\n",
+                            i + 1, parts[0], parts[1], Double.parseDouble(parts[2]),
+                            parts[3], parts[4]);
+                }
+            }
+        } else {
+            System.out.println("✗ Ошибка получения меню");
+        }
+    }
+
+    private static void searchDishByName() {
+        scanner.nextLine();
+        System.out.print("Введите название блюда: ");
+        String name = scanner.nextLine();
+
+        Request request = new Request(Operation.GET_DISH_BY_NAME, name);
+        Response response = client.sendRequest(request);
+
+        if (response != null) {
+            if (response.isSuccess()) {
+                String[] parts = response.getData().split("\\|");
+                if (parts.length >= 5) {
+                    System.out.println("\n✓ Блюдо найдено:");
+                    System.out.printf("[%s] %s\n", parts[0], parts[1]);
+                    System.out.printf("Цена: %.2f ₽\n", Double.parseDouble(parts[2]));
+                    System.out.printf("Калории: %s kcal\n", parts[3]);
+                    System.out.printf("Ингредиенты: %s\n", parts[4]);
+                }
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
+        }
+    }
+
+    private static void updateDishPrice() {
+        scanner.nextLine();
+        System.out.print("Введите название блюда: ");
+        String name = scanner.nextLine();
+
+        double newPrice = getDoubleInput("Новая цена (₽): ");
+
+        String data = name + "|" + newPrice;
+        Request request = new Request(Operation.UPDATE_DISH_PRICE, data);
+
+        Response response = client.sendRequest(request);
+
+        if (response != null) {
+            if (response.isSuccess()) {
+                System.out.println("✓ " + response.getMessage());
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
+        }
+    }
+
+    private static void updateDishIngredients() {
+        scanner.nextLine();
+        System.out.print("Введите название блюда: ");
+        String name = scanner.nextLine();
 
         System.out.print("Новые ингредиенты: ");
         String ingredients = scanner.nextLine();
 
-        System.out.print("Новый тип (Starter/MainCourse/Dessert): ");
-        String type = scanner.nextLine();
+        String data = name + "|" + ingredients;
+        Request request = new Request(Operation.UPDATE_DISH_INGREDIENTS, data);
 
-        Dish dish = new Dish(id, name, price, calories, ingredients, type);
-
-        Request request = new Request(Operation.UPDATE_DISH, gson.toJson(dish));
         Response response = client.sendRequest(request);
 
-        System.out.println(response.isSuccess() ? "✓ " + response.getMessage() : "✗ " + response.getMessage());
-    }
-
-    private static void deleteDishInteractive() {
-        getAllDishes();
-
-        System.out.print("\nВведите ID блюда для удаления: ");
-        String id = scanner.nextLine();
-
-        JsonObject json = new JsonObject();
-        json.addProperty("id", id);
-
-        Request request = new Request(Operation.DELETE_DISH, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        System.out.println(response.isSuccess() ? "✓ " + response.getMessage() : "✗ " + response.getMessage());
-    }
-
-    private static void filterByType(String type) {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
-
-        Request request = new Request(Operation.FILTER_BY_TYPE, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
-
-            System.out.println("\n=== ФИЛЬТР ПО ТИПУ: " + type + " ===");
-            dishes.forEach(d -> System.out.println("  " + d));
-        } else {
-            System.out.println("✗ " + response.getMessage());
+        if (response != null) {
+            if (response.isSuccess()) {
+                System.out.println("✓ " + response.getMessage());
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
         }
     }
 
-    private static void filterByTypeInteractive() {
-        System.out.println("Тип: 1-Starter, 2-MainCourse, 3-Dessert");
-        System.out.print("Выберите: ");
-        int choice = Integer.parseInt(scanner.nextLine());
+    private static void deleteDish() {
+        scanner.nextLine();
+        System.out.print("Введите название блюда для удаления: ");
+        String name = scanner.nextLine();
 
-        String type = switch (choice) {
-            case 1 -> "Starter";
-            case 2 -> "MainCourse";
-            case 3 -> "Dessert";
-            default -> "MainCourse";
+        Request request = new Request(Operation.DELETE_DISH, name);
+        Response response = client.sendRequest(request);
+
+        if (response != null) {
+            if (response.isSuccess()) {
+                System.out.println("✓ " + response.getMessage());
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
+        }
+    }
+
+    private static void orderDish() {
+        scanner.nextLine();
+        System.out.print("Введите название блюда для заказа: ");
+        String name = scanner.nextLine();
+
+        Request request = new Request(Operation.ORDER_DISH, name);
+        Response response = client.sendRequest(request);
+
+        if (response != null) {
+            if (response.isSuccess()) {
+                System.out.println("✓ " + response.getMessage());
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
+        }
+    }
+
+    private static void prepareDish() {
+        scanner.nextLine();
+        System.out.print("Введите название блюда для приготовления: ");
+        String name = scanner.nextLine();
+
+        Request request = new Request(Operation.PREPARE_DISH, name);
+        Response response = client.sendRequest(request);
+
+        if (response != null) {
+            if (response.isSuccess()) {
+                System.out.println("✓ " + response.getMessage());
+            } else {
+                System.out.println("✗ " + response.getMessage());
+            }
+        }
+    }
+
+    private static void viewOrderStatistics() {
+        Request request = new Request(Operation.GET_ORDER_STATISTICS);
+        Response response = client.sendRequest(request);
+
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n=== СТАТИСТИКА ЗАКАЗОВ ===");
+            String data = response.getData();
+
+            if (data == null || data.isEmpty()) {
+                System.out.println("Заказов пока не было");
+                return;
+            }
+
+            String[] orders = data.split(";;");
+
+            for (String order : orders) {
+                String[] parts = order.split("\\|");
+                if (parts.length >= 2) {
+                    System.out.printf("%-30s | Заказов: %s\n", parts[0], parts[1]);
+                }
+            }
+        }
+    }
+
+    private static void filterMenu() {
+        System.out.println("\n=== ФИЛЬТРАЦИЯ МЕНЮ ===");
+        System.out.println("1. По типу блюда");
+        System.out.println("2. По цене");
+        System.out.println("3. По калорийности");
+
+        int choice = getIntInput("Выберите тип фильтра: ");
+
+        Request request = null;
+
+        switch (choice) {
+            case 1 -> {
+                scanner.nextLine();
+                System.out.println("Типы: Starter, MainCourse, Dessert");
+                System.out.print("Введите тип: ");
+                String type = scanner.nextLine();
+                request = new Request(Operation.FILTER_BY_TYPE, type);
+            }
+            case 2 -> {
+                double minPrice = getDoubleInput("Минимальная цена: ");
+                double maxPrice = getDoubleInput("Максимальная цена: ");
+                String data = minPrice + "|" + maxPrice;
+                request = new Request(Operation.FILTER_BY_PRICE, data);
+            }
+            case 3 -> {
+                int minCal = getIntInput("Минимум калорий: ");
+                int maxCal = getIntInput("Максимум калорий: ");
+                String data = minCal + "|" + maxCal;
+                request = new Request(Operation.FILTER_BY_CALORIES, data);
+            }
+            default -> {
+                System.out.println("✗ Неверный выбор!");
+                return;
+            }
+        }
+
+        if (request != null) {
+            Response response = client.sendRequest(request);
+
+            if (response != null && response.isSuccess()) {
+                System.out.println("\n=== РЕЗУЛЬТАТЫ ФИЛЬТРАЦИИ ===");
+                String data = response.getData();
+
+                if (data == null || data.isEmpty()) {
+                    System.out.println("По заданным критериям ничего не найдено");
+                    return;
+                }
+
+                String[] dishes = data.split(";;");
+                for (int i = 0; i < dishes.length; i++) {
+                    String[] parts = dishes[i].split("\\|");
+                    if (parts.length >= 5) {
+                        System.out.printf("%d. [%s] %s | %.2f ₽ | %s kcal | %s\n",
+                                i + 1, parts[0], parts[1], Double.parseDouble(parts[2]),
+                                parts[3], parts[4]);
+                    }
+                }
+            } else {
+                System.out.println("✗ Ошибка фильтрации");
+            }
+        }
+    }
+
+    private static void sortMenu() {
+        System.out.println("\n=== СОРТИРОВКА МЕНЮ ===");
+        System.out.println("1. По названию");
+        System.out.println("2. По цене");
+        System.out.println("3. По калорийности");
+
+        int choice = getIntInput("Выберите критерий: ");
+        System.out.print("По возрастанию? (true/false): ");
+        boolean ascending = scanner.nextBoolean();
+
+        Operation operation = switch (choice) {
+            case 1 -> Operation.SORT_BY_NAME;
+            case 2 -> Operation.SORT_BY_PRICE;
+            case 3 -> Operation.SORT_BY_CALORIES;
+            default -> null;
         };
 
-        filterByType(type);
-    }
+        if (operation == null) {
+            System.out.println("✗ Неверный выбор!");
+            return;
+        }
 
-    private static void filterByPrice(double min, double max) {
-        JsonObject json = new JsonObject();
-        json.addProperty("minPrice", min);
-        json.addProperty("maxPrice", max);
-
-        Request request = new Request(Operation.FILTER_BY_PRICE, gson.toJson(json));
+        Request request = new Request(operation, String.valueOf(ascending));
         Response response = client.sendRequest(request);
 
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n=== ОТСОРТИРОВАННОЕ МЕНЮ ===");
+            String data = response.getData();
 
-            System.out.println("\n=== ФИЛЬТР ПО ЦЕНЕ: " + min + "-" + max + " ₽ ===");
-            dishes.forEach(d -> System.out.println("  " + d));
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void filterByPriceInteractive() {
-        System.out.print("Минимальная цена: ");
-        double min = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Максимальная цена: ");
-        double max = Double.parseDouble(scanner.nextLine());
-
-        filterByPrice(min, max);
-    }
-
-    private static void filterByCaloriesInteractive() {
-        System.out.print("Минимум калорий: ");
-        int min = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Максимум калорий: ");
-        int max = Integer.parseInt(scanner.nextLine());
-
-        JsonObject json = new JsonObject();
-        json.addProperty("minCalories", min);
-        json.addProperty("maxCalories", max);
-
-        Request request = new Request(Operation.FILTER_BY_CALORIES, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
-
-            System.out.println("\n=== ФИЛЬТР ПО КАЛОРИЯМ: " + min + "-" + max + " kcal ===");
-            dishes.forEach(d -> System.out.println("  " + d));
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void sortByPrice(boolean ascending) {
-        JsonObject json = new JsonObject();
-        json.addProperty("ascending", ascending);
-
-        Request request = new Request(Operation.SORT_BY_PRICE, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
-
-            System.out.println("\n=== СОРТИРОВКА ПО ЦЕНЕ (" +
-                    (ascending ? "возрастание" : "убывание") + ") ===");
-            dishes.forEach(d -> System.out.printf("  %.2f ₽ - %s%n", d.getPrice(), d.getName()));
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void sortByNameInteractive() {
-        System.out.print("По возрастанию? (true/false): ");
-        boolean ascending = Boolean.parseBoolean(scanner.nextLine());
-
-        JsonObject json = new JsonObject();
-        json.addProperty("ascending", ascending);
-
-        Request request = new Request(Operation.SORT_BY_NAME, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
-
-            System.out.println("\n=== СОРТИРОВКА ПО НАЗВАНИЮ ===");
-            dishes.forEach(d -> System.out.println("  " + d.getName()));
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void sortByPriceInteractive() {
-        System.out.print("По возрастанию? (true/false): ");
-        boolean ascending = Boolean.parseBoolean(scanner.nextLine());
-        sortByPrice(ascending);
-    }
-
-    private static void sortByCaloriesInteractive() {
-        System.out.print("По возрастанию? (true/false): ");
-        boolean ascending = Boolean.parseBoolean(scanner.nextLine());
-
-        JsonObject json = new JsonObject();
-        json.addProperty("ascending", ascending);
-
-        Request request = new Request(Operation.SORT_BY_CALORIES, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        if (response.isSuccess()) {
-            List<Dish> dishes = gson.fromJson(response.getData(),
-                    new TypeToken<List<Dish>>(){}.getType());
-
-            System.out.println("\n=== СОРТИРОВКА ПО КАЛОРИЯМ ===");
-            dishes.forEach(d -> System.out.printf("  %d kcal - %s%n", d.getCalories(), d.getName()));
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void orderDish(String id) {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", id);
-
-        Request request = new Request(Operation.ORDER_DISH, gson.toJson(json));
-        Response response = client.sendRequest(request);
-
-        if (response.isSuccess()) {
-            System.out.println("✓ " + response.getMessage());
-            Dish dish = gson.fromJson(response.getData(), Dish.class);
-            System.out.println("  Заказано: " + dish.getName());
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void orderDishInteractive() {
-        getAllDishes();
-
-        System.out.print("\nВведите ID блюда для заказа: ");
-        String id = scanner.nextLine();
-
-        orderDish(id);
-    }
-
-    private static void getOrderStatistics() {
-        Response response = client.sendRequest(new Request(Operation.GET_ORDER_STATISTICS));
-
-        if (response.isSuccess()) {
-            Map<String, Object> stats = gson.fromJson(response.getData(),
-                    new TypeToken<Map<String, Object>>(){}.getType());
-
-            System.out.println("\n=== СТАТИСТИКА ЗАКАЗОВ ===");
-            stats.forEach((key, value) -> {
-                if (!key.equals("totalOrders")) {
-                    System.out.printf("  %-30s | Заказов: %.0f%n", key, ((Number) value).doubleValue());
-                }
-            });
-
-            if (stats.containsKey("totalOrders")) {
-                System.out.println("\nВсего заказов: " + ((Number) stats.get("totalOrders")).intValue());
+            if (data == null || data.isEmpty()) {
+                System.out.println("Меню пусто");
+                return;
             }
-        } else {
-            System.out.println("✗ " + response.getMessage());
+
+            String[] dishes = data.split(";;");
+            for (int i = 0; i < dishes.length; i++) {
+                String[] parts = dishes[i].split("\\|");
+                if (parts.length >= 5) {
+                    System.out.printf("%d. [%s] %s | %.2f ₽ | %s kcal | %s\n",
+                            i + 1, parts[0], parts[1], Double.parseDouble(parts[2]),
+                            parts[3], parts[4]);
+                }
+            }
         }
     }
 
-    private static void getStatistics() {
-        Response response = client.sendRequest(new Request(Operation.GET_STATISTICS));
-
-        if (response.isSuccess()) {
-            System.out.println("\n=== ОБЩАЯ СТАТИСТИКА ===");
-            System.out.println(response.getMessage());
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void getCaloriesMap() {
-        Response response = client.sendRequest(new Request(Operation.GET_CALORIES_MAP));
-
-        if (response.isSuccess()) {
-            Map<String, Integer> caloriesMap = gson.fromJson(response.getData(),
-                    new TypeToken<Map<String, Integer>>(){}.getType());
-
-            System.out.println("\n=== КАРТА КАЛОРИЙНОСТИ ===");
-            caloriesMap.forEach((name, cal) ->
-                    System.out.printf("  %-30s | %4d kcal%n", name, cal));
-        } else {
-            System.out.println("✗ " + response.getMessage());
-        }
-    }
-
-    private static void getMenuChangeLog(int limit) {
-        JsonObject json = new JsonObject();
-        json.addProperty("limit", limit);
-
-        Request request = new Request(Operation.GET_MENU_CHANGE_LOG, gson.toJson(json));
+    private static void viewStatistics() {
+        Request request = new Request(Operation.GET_STATISTICS);
         Response response = client.sendRequest(request);
 
-        if (response.isSuccess()) {
-            List<String> logs = gson.fromJson(response.getData(),
-                    new TypeToken<List<String>>(){}.getType());
-
-            System.out.println("\n=== ЖУРНАЛ ИЗМЕНЕНИЙ (последние " + limit + ") ===");
-            logs.forEach(log -> System.out.println("  " + log));
-        } else {
-            System.out.println("✗ " + response.getMessage());
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n" + response.getData());
         }
     }
 
-    private static void getMenuChangeLogInteractive() {
-        System.out.print("Сколько записей показать? ");
-        int limit = Integer.parseInt(scanner.nextLine());
-        getMenuChangeLog(limit);
+    private static void viewCaloriesMap() {
+        Request request = new Request(Operation.GET_CALORIES_MAP);
+        Response response = client.sendRequest(request);
+
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n=== КАРТА КАЛОРИЙНОСТИ ===");
+            String data = response.getData();
+
+            if (data == null || data.isEmpty()) {
+                System.out.println("Карта пуста");
+                return;
+            }
+
+            String[] items = data.split(";;");
+            for (String item : items) {
+                String[] parts = item.split("\\|");
+                if (parts.length >= 2) {
+                    System.out.printf("%-30s | %s kcal\n", parts[0], parts[1]);
+                }
+            }
+        }
     }
 
-    private static void disconnectFromServer() {
-        System.out.println("\nОтключение от сервера...");
+    private static void viewTopPopularDishes() {
+        int n = getIntInput("Сколько блюд показать? ");
 
-        Request disconnectRequest = new Request(Operation.DISCONNECT);
-        client.sendRequest(disconnectRequest);
+        Request request = new Request(Operation.GET_TOP_POPULAR_DISHES, String.valueOf(n));
+        Response response = client.sendRequest(request);
+
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n=== ТОП-" + n + " ПОПУЛЯРНЫХ БЛЮД ===");
+            String data = response.getData();
+
+            if (data == null || data.isEmpty()) {
+                System.out.println("Заказов пока не было");
+                return;
+            }
+
+            String[] dishes = data.split(";;");
+            for (int i = 0; i < dishes.length; i++) {
+                String[] parts = dishes[i].split("\\|");
+                if (parts.length >= 2) {
+                    System.out.printf("%d. %-30s | Заказов: %s\n", i + 1, parts[0], parts[1]);
+                }
+            }
+        }
+    }
+
+    private static void disconnect() {
+        Request request = new Request(Operation.DISCONNECT);
+        Response response = client.sendRequest(request);
+
+        if (response != null && response.isSuccess()) {
+            System.out.println("\n✓ " + response.getMessage());
+        }
 
         client.disconnect();
         System.out.println("До свидания!");
+    }
+
+    // Вспомогательные методы
+    private static int getIntInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("✗ Ошибка! Введите целое число.");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    private static double getDoubleInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return scanner.nextDouble();
+            } catch (Exception e) {
+                System.out.println("✗ Ошибка! Введите число.");
+                scanner.nextLine();
+            }
+        }
     }
 }

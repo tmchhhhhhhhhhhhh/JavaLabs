@@ -1,4 +1,4 @@
-package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.common.network;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

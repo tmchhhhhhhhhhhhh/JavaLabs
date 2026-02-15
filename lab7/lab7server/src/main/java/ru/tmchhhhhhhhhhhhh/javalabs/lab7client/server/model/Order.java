@@ -1,9 +1,9 @@
-package ru.restaurant.server.model;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.restaurant.common.model.Dish;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.model.Dish;
 
 import java.time.LocalDateTime;
 

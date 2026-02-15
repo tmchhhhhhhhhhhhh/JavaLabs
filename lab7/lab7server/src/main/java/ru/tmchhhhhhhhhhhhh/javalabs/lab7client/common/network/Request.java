@@ -1,10 +1,10 @@
-package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.common.network;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.common.enums.Operation;
+import ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.enums.Operation;
 
 import java.io.Serializable;
 

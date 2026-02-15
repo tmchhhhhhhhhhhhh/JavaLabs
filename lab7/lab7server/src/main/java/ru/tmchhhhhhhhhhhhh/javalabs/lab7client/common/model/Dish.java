@@ -1,4 +1,4 @@
-package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.server.common.model;
+package ru.tmchhhhhhhhhhhhh.javalabs.lab7client.common.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ public class Dish implements Serializable {
     private String type;  // Starter, MainCourse, Dessert
     
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private transient LocalDateTime createdAt;
     
     @PrePersist
     protected void onCreate() {
